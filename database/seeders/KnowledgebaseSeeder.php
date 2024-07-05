@@ -17,18 +17,19 @@ class KnowledgebaseSeeder extends Seeder
 
         $k = 0;
         for ($i = 1; $i <= 6; $i++) {
-            for ($j = 1; $j <= 31; $j++) {
-                if ($j >= 1 && $j <= 5) {
+            for ($j = 1; $j <= 32; $j++) {
+                if ($i == 1 && $j >= 1 && $j <= 5) {
                     Knowledgebase::create([
                         'disease_id' => $i,
                         'symptom_id' => $j,
                         'cfpakar' => $cfpakar[$k]
                     ]);
                     $k++;
-                } elseif ($j >= 6 && $j <= 12) {
+                } elseif ($i == 2 && $j >= 6 && $j <= 12) {
                     $cfpakarvalue = $cfpakar[$k];
-                    if ($i == 6) {
+                    if ($j == 6) {
                         $cfpakarvalue = $cfpakar[3];
+                        $k--;
                     }
                     Knowledgebase::create([
                         'disease_id' => $i,
@@ -36,8 +37,34 @@ class KnowledgebaseSeeder extends Seeder
                         'cfpakar' => $cfpakarvalue
                     ]);
                     $k++;
-                } else {
-                    # code...
+                } elseif ($i == 3 && $j >= 13 && $j <= 15) {
+                    Knowledgebase::create([
+                        'disease_id' => $i,
+                        'symptom_id' => $j,
+                        'cfpakar' => $cfpakar[$k]
+                    ]);
+                    $k++;
+                } elseif ($i == 4 && $j >= 16 && $j <= 22) {
+                    Knowledgebase::create([
+                        'disease_id' => $i,
+                        'symptom_id' => $j,
+                        'cfpakar' => $cfpakar[$k]
+                    ]);
+                    $k++;
+                } elseif ($i == 5 && $j >= 23 && $j <= 26) {
+                    Knowledgebase::create([
+                        'disease_id' => $i,
+                        'symptom_id' => $j,
+                        'cfpakar' => $cfpakar[$k]
+                    ]);
+                    $k++;
+                } elseif ($i == 6 && $j >= 27 && $j <= 32) {
+                    Knowledgebase::create([
+                        'disease_id' => $i,
+                        'symptom_id' => $j,
+                        'cfpakar' => $cfpakar[$k]
+                    ]);
+                    $k++;
                 }
             }
 
