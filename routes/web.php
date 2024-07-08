@@ -24,8 +24,9 @@ Route::resource('symptoms', SymptomController::class)->except(['show']);
 // Route::put('/symptoms/{symptom}', [SymptomController::class, 'update'])->name('symptoms.update');
 // Route::delete('/symptoms/{symptom}', [SymptomController::class, 'destroy'])->name('symptoms.destroy');
 
-// route konsultasi
-Route::get('/consultation', [ConsultationController::class, 'index'])->name('consultation.index');
-
 // route basis pengetahuan
 Route::resource('knowledgebases', KnowledgebaseController::class)->except(['show']);
+
+// route konsultasi
+Route::get('/consultation', [ConsultationController::class, 'index'])->name('consultation.index');
+Route::post('/consultation', [ConsultationController::class, 'diagnose'])->name('consultation.diagnose');

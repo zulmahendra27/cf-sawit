@@ -22,6 +22,7 @@
                                     <th>No</th>
                                     <th>Penyakit</th>
                                     <th>Gejala</th>
+                                    <th>CF Pakar</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -31,6 +32,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $knowledgebase->disease->nama }}</td>
                                         <td>{{ $knowledgebase->symptom->kode . ' - ' . $knowledgebase->symptom->gejala }}
+                                        <td>{{ $knowledgebase->cfpakar }}
                                         </td>
                                         <td>
                                             <a href="{{ route('knowledgebases.edit', $knowledgebase) }}"

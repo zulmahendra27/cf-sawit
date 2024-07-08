@@ -31,7 +31,7 @@
                     <p>Basis Pengetahuan</p>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ Request::is('consultation*') ? 'active' : '' }}">
                 <a href="{{ route('consultation.index') }}">
                     <i class="fas fa-check-double"></i>
                     <p>Konsultasi</p>
