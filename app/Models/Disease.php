@@ -21,4 +21,9 @@ class Disease extends Model
     {
         return $this->hasMany(Knowledgebase::class);
     }
+
+    public function consulations(): HasMany
+    {
+        return $this->hasMany(Consultation::class);
+    }
 }

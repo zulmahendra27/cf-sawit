@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Disease;
 use App\Models\Symptom;
+use Illuminate\Support\Str;
+use App\Models\Consultation;
 use Illuminate\Http\Request;
 
 class ConsultationController extends Controller
@@ -18,25 +21,30 @@ class ConsultationController extends Controller
 
     public function diagnose(Request $request)
     {
+        $validated = $request->validate([
+            'gejala' => 'required|array'
+        ]);
+
         $diseases = Disease::with('knowledgebases')->get();
         $arraySymptoms = [];
 
         if ($diseases) {
             foreach ($diseases as $keyDisease => $disease) {
+                $arraySymptoms[$keyDisease][0] = $disease->id;
+                $arraySymptoms[$keyDisease][1] = $disease->nama;
                 foreach ($disease->knowledgebases as $keyKnowledgebase => $knowledgebase) {
-                    $arraySymptoms[$keyDisease][$keyKnowledgebase] = [$knowledgebase->symptom->kode, $knowledgebase->cfpakar];
+                    $arraySymptoms[$keyDisease][2][$keyKnowledgebase] = [$knowledgebase->symptom->kode, $knowledgebase->cfpakar];
                 }
             }
         }
 
-        $datas = [];
         $arrayCfHE = [];
 
         if ($arraySymptoms) {
             foreach ($arraySymptoms as $keySymptom => $symptoms) {
                 $i = 0;
-                foreach ($symptoms as $symptom) {
-                    foreach ($request->gejala as $key => $data) {
+                foreach ($symptoms[2] as $symptom) {
+                    foreach ($validated['gejala'] as $data) {
                         $explode = explode('-_-', $data);
                         $kodeRequest = $explode[0];
                         $cfuser = $explode[1];
@@ -46,7 +54,9 @@ class ConsultationController extends Controller
                             // print_r($symptom[0]);
                             // print_r($symptom[1]);
 
-                            $arrayCfHE[$keySymptom][$i] = [$kodeRequest, ($symptom[1] * $cfuser)];
+                            $arrayCfHE[$keySymptom][0] = $symptoms[0];
+                            $arrayCfHE[$keySymptom][1] = $symptoms[1];
+                            $arrayCfHE[$keySymptom][2][$i] = [$kodeRequest, ($symptom[1] * $cfuser)];
                             $i++;
                         }
                     }
@@ -56,20 +66,76 @@ class ConsultationController extends Controller
         }
 
         if ($arrayCfHE) {
-            foreach ($arrayCfHE as $cfHE) {
+            $arrayPercentage = [];
+            foreach ($arrayCfHE as $keyCfHE => $cfHE) {
                 // print_r(count($cfHE));
-                $cfCombine = 0;
-                $cfHEOld = $cfHE[0][1];
+                $cfCombine = $cfHE[2][0][1];
+                // $arrayCfCombine[] = $cfCombine;
                 if (count($cfHE) > 1) {
-                    for ($i = 1; $i < count($cfHE); $i++) {
-                        $cfHEOld += $cfHE[$i][1] * (1 - $cfHEOld);
+                    for ($i = 1; $i < count($cfHE[2]); $i++) {
+                        $cfCombine += $cfHE[2][$i][1] * (1 - $cfCombine);
+                        // $arrayCfCombine[] = $cfCombine;
+                        // print_r($cfCombine);
                     }
                 }
-                print_r($cfHEOld * 100);
-                print_r('<br>');
+
+                $arrayPercentage[$keyCfHE]['id'] = $cfHE[0];
+                $arrayPercentage[$keyCfHE]['disease'] = $cfHE[1];
+                $arrayPercentage[$keyCfHE]['percentage'] = round($cfCombine * 100, 2);
+
+                // print_r($cfCombine * 100);
+                // print_r($arrayCfCombine);
+                // print_r('<br>');
             }
         }
 
-        dd($arrayCfHE);
+        usort($arrayPercentage, function ($a, $b) {
+            return $b['percentage'] <=> $a['percentage'];
+        });
+
+        foreach ($arrayPercentage as $percentage) {
+            $uuid = Str::uuid();
+
+            Consultation::create([
+                'uuid' => $uuid,
+                'user_id' => auth()->user()->id,
+                'disease_id' => $percentage['id'],
+                'percentage' => $percentage['percentage']
+            ]);
+
+            // $alert = [
+            //     'alert' => 'Diagnosa berhasil',
+            //     'title' => 'Sukses!',
+            //     'type' => 'success'
+            // ];
+
+            return redirect(route('consultation.detail', $uuid));
+        }
+
+        // dd($arrayPercentage);
+    }
+
+    public function result()
+    {
+        $consultations = Consultation::with('disease')->where(['user_id' => auth()->user()->id])->latest()->take(10)->get();
+
+        if (auth()->user()->level === 'admin') {
+            $consultations = User::with(['consultations' => function ($query) {
+                $query->latest()->limit(10);
+            }])->where(['level' => 'user'])->get();
+        }
+
+        return view('consultation.result', [
+            'title' => 'Riwayat Diagnosa',
+            'consultations' => $consultations
+        ]);
+    }
+
+    public function detail(Consultation $consultation)
+    {
+        return view('consultation.detail', [
+            'title' => 'Hasil Diagnosa',
+            'consultation' => $consultation->load('disease')
+        ]);
     }
 }

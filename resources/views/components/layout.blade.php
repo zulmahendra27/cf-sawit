@@ -97,8 +97,7 @@
             <div class="container">
                 <div class="page-inner">
                     <div class="page-header">
-                        <h3 class="fw-bold mb-3">{{ $title }}</h3>
-                        <ul class="breadcrumbs mb-3">
+                        <ul class="breadcrumbs ms-0 ps-3 mb-3">
                             <li class="nav-home">
                                 <a href="#">
                                     <i class="icon-home"></i>
@@ -167,6 +166,32 @@
                             swal.close();
                         }
                     });
+                });
+            });
+
+            document.getElementById('logoutBtn').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                swal({
+                    title: "Keluar?",
+                    text: "Terimakasih telah menggunakan sistem ini",
+                    icon: "warning",
+                    buttons: {
+                        confirm: {
+                            text: "Logout",
+                            className: "btn btn-success",
+                        },
+                        cancel: {
+                            visible: true,
+                            className: "btn btn-danger",
+                        },
+                    },
+                }).then((Delete) => {
+                    if (Delete) {
+                        this.submit();
+                    } else {
+                        swal.close();
+                    }
                 });
             });
         });
