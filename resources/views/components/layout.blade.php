@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>{{ $title }} - Certainty Factor Sawit</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    @if (Request::is('consultation'))
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    @endif
     <link rel="icon" href="{{ asset('img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
 
     <!-- Fonts and icons -->
@@ -43,9 +46,10 @@
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="blue2">
-                    <a href="/" class="logo">
-                        <img src="{{ asset('img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
-                            height="20" />
+                    <a href="/" class="logo text-white fw-bold fs-3">
+                        {{-- <img src="{{ asset('img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
+                            height="20" /> --}}
+                        Diagnosa
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -138,6 +142,10 @@
     <!-- Kaiadmin JS -->
     <script src="{{ asset('js/kaiadmin.min.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
+
+    @if (Request::is('consultation'))
+        <script src="{{ asset('js/script-consultation.js') }}"></script>
+    @endif
 
     <script>
         document.addEventListener("DOMContentLoaded", (event) => {

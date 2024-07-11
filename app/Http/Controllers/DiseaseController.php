@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Disease;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DiseaseController extends Controller
 {
@@ -35,9 +36,22 @@ class DiseaseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => 'required|max:255'
+            'nama' => 'required|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-        $validated['uuid'] = Str::uuid();
+
+        $uuid = Str::uuid();
+
+        // Menyimpan file dengan nama baru
+        $file = $request->file('image');
+        $extension = $file->getClientOriginalExtension();
+        $filename = $uuid . '.' . $extension;
+
+        // Menyimpan file ke direktori 'images'
+        $path = $file->storeAs('images', $filename, 'public');
+
+        $validated['uuid'] = $uuid;
+        $validated['image'] = $path;
 
         Disease::create($validated);
 
@@ -75,8 +89,29 @@ class DiseaseController extends Controller
     public function update(Request $request, Disease $disease)
     {
         $validated = $request->validate([
-            'nama' => 'required|max:255'
+            'nama' => 'required|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Mengambil data pengguna
+        $path = $disease->image;
+
+        // Jika ada file foto baru, simpan dengan nama baru
+        if ($request->hasFile('image')) {
+            // Hapus file lama
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $filename = $disease->uuid . '.' . $extension;
+
+            // Menyimpan file ke direktori 'images'
+            $path = $file->storeAs('images', $filename, 'public');
+        }
+
+        $validated['image'] = $path;
 
         $disease->where('id', $disease->id)->update($validated);
 
@@ -94,6 +129,11 @@ class DiseaseController extends Controller
      */
     public function destroy(Disease $disease)
     {
+        // Menghapus file foto dari storage
+        if ($disease->image && Storage::disk('public')->exists($disease->image)) {
+            Storage::disk('public')->delete($disease->image);
+        }
+
         $disease->delete();
 
         $alert = [

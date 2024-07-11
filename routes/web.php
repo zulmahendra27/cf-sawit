@@ -36,6 +36,7 @@ Route::middleware(['user'])->group(function () {
     // route konsultasi
     Route::get('/consultation', [ConsultationController::class, 'index'])->name('consultation.index');
     Route::post('/consultation', [ConsultationController::class, 'diagnose'])->name('consultation.diagnose');
+    Route::post('/consultation/findSymptoms', [ConsultationController::class, 'findSymptoms'])->name('consultation.findSymptoms');
 });
 
 Route::middleware(['auth'])->group(function () {

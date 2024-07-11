@@ -24,9 +24,9 @@
                                     <th>Pasti</th>
                                 </tr> --}}
                             </thead>
-                            <tbody>
-                                <form id="myForm" method="POST" action="{{ route('consultation.diagnose') }}">
-                                    @csrf
+                            <form id="myForm" method="POST" action="{{ route('consultation.diagnose') }}">
+                                @csrf
+                                <tbody id="dataInTable">
                                     @foreach ($symptoms as $symptom)
                                         <tr>
                                             <td>{{ $symptom->gejala }}</td>
@@ -34,38 +34,39 @@
                                                 <div class="selectgroup w-100">
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-0"
-                                                            class="selectgroup-input" />
+                                                            value="{{ $symptom->id }}-_-0" class="selectgroup-input" />
                                                         <span class="selectgroup-button text-dark">Tidak Tahu</span>
                                                     </label>
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-0.2"
+                                                            value="{{ $symptom->id }}-_-0.2"
                                                             class="selectgroup-input" />
-                                                        <span class="selectgroup-button text-dark">Tidak Yakin</span>
+                                                        <span class="selectgroup-button text-dark">Tidak
+                                                            Yakin</span>
                                                     </label>
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-0.4"
+                                                            value="{{ $symptom->id }}-_-0.4"
                                                             class="selectgroup-input" />
                                                         <span class="selectgroup-button text-dark">Mungkin</span>
                                                     </label>
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-0.6"
+                                                            value="{{ $symptom->id }}-_-0.6"
                                                             class="selectgroup-input" />
                                                         <span class="selectgroup-button text-dark">Kemungkinan
                                                             Besar</span>
                                                     </label>
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-0.8"
+                                                            value="{{ $symptom->id }}-_-0.8"
                                                             class="selectgroup-input" />
-                                                        <span class="selectgroup-button text-dark">Hampir Pasti</span>
+                                                        <span class="selectgroup-button text-dark">Hampir
+                                                            Pasti</span>
                                                     </label>
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
-                                                            value="{{ $symptom->kode }}-_-1"
+                                                            value="{{ $symptom->id }}-_-1"
                                                             class="selectgroup-input" />
                                                         <span class="selectgroup-button text-dark">Pasti</span>
                                                     </label>
@@ -73,15 +74,21 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                </tbody>
+                                <tfoot>
                                     <tr>
                                         <td colspan="2">
                                             <button class="btn btn-success" type="submit">
                                                 <i class="fas fa-search-plus me-2"></i>Diagnosa
                                             </button>
+                                            <a href="{{ route('consultation.index') }}"
+                                                class="btn btn-warning text-white">
+                                                <i class="fas fa-recycle me-2"></i>Clear
+                                            </a>
                                         </td>
                                     </tr>
-                                </form>
-                            </tbody>
+                                </tfoot>
+                            </form>
                         </table>
                     </div>
                 </div>
@@ -89,50 +96,5 @@
         </div>
 
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
-            const form = document.getElementById('myForm');
-
-            radioButtons.forEach((radio) => {
-                radio.addEventListener('click', function() {
-                    if (this.checked) {
-                        if (this.dataset.wasChecked === 'true') {
-                            this.checked = false;
-                            this.dataset.wasChecked = '';
-                        } else {
-                            this.dataset.wasChecked = 'true';
-                        }
-                    } else {
-                        this.dataset.wasChecked = '';
-                    }
-                });
-            });
-
-            // form.addEventListener('submit', function(event) {
-            //     event.preventDefault();
-
-            //     const dataGroups = document.querySelectorAll('.selectgroup');
-            //     const results = [];
-
-            //     dataGroups.forEach(group => {
-            //         const radios = group.querySelectorAll('input[type="radio"]');
-            //         let selectedValue = null;
-
-            //         radios.forEach(radio => {
-            //             if (radio.checked) {
-            //                 selectedValue = radio.value;
-            //             }
-            //         });
-
-            //         results.push(selectedValue);
-            //     });
-
-            //     console.log(results);
-            //     // Array berisi nilai dari setiap grup data atau null jika tidak ada yang dipilih
-            // });
-        });
-    </script>
 
 </x-layout>

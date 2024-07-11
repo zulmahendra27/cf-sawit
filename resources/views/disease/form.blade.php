@@ -13,7 +13,7 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <form method="post"
+                    <form method="post" enctype="multipart/form-data"
                         action="{{ isset($disease) ? route('diseases.update', $disease) : route('diseases.store') }}">
                         @if (isset($disease))
                             @method('put')
@@ -32,6 +32,28 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="image">Gambar Penyakit</label>
+                            <div class="col-md-6">
+                                <input type="file" class="form-control @error('image') is-invalid @enderror"
+                                    name="image" id="image" />
+                                @error('image')
+                                    <div class="form-text text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div id="preview-container" class="row mb-3 justify-content-end"
+                            style="display: {{ isset($disease) ? 'flex' : 'none' }}">
+                            <div class="col-md-10">
+                                <div class="col-md-4">
+                                    <img id="image-preview" class="card-img-top rounded"
+                                        src="{{ isset($disease) ? asset('storage/' . $disease->image) : '#' }}"
+                                        alt="Image Preview" />
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row justify-content-end">
                             <div class="col-md-10">
                                 <button type="submit" class="btn btn-primary rounded">
@@ -46,5 +68,17 @@
         </div>
 
     </div>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('image-preview');
+                output.src = reader.result;
+                document.getElementById('preview-container').style.display = 'flex';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+    </script>
 
 </x-layout>

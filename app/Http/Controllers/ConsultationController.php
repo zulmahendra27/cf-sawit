@@ -8,6 +8,7 @@ use App\Models\Symptom;
 use Illuminate\Support\Str;
 use App\Models\Consultation;
 use Illuminate\Http\Request;
+use App\Models\Knowledgebase;
 
 class ConsultationController extends Controller
 {
@@ -33,7 +34,7 @@ class ConsultationController extends Controller
                 $arraySymptoms[$keyDisease][0] = $disease->id;
                 $arraySymptoms[$keyDisease][1] = $disease->nama;
                 foreach ($disease->knowledgebases as $keyKnowledgebase => $knowledgebase) {
-                    $arraySymptoms[$keyDisease][2][$keyKnowledgebase] = [$knowledgebase->symptom->kode, $knowledgebase->cfpakar];
+                    $arraySymptoms[$keyDisease][2][$keyKnowledgebase] = [$knowledgebase->symptom->id, $knowledgebase->cfpakar];
                 }
             }
         }
@@ -46,9 +47,9 @@ class ConsultationController extends Controller
                 foreach ($symptoms[2] as $symptom) {
                     foreach ($validated['gejala'] as $data) {
                         $explode = explode('-_-', $data);
-                        $kodeRequest = $explode[0];
+                        $idRequest = $explode[0];
                         $cfuser = $explode[1];
-                        if ($symptom[0] == $kodeRequest) {
+                        if ($symptom[0] == $idRequest) {
                             // $datas[$keySymptom][$i] =
                             //     $i++;
                             // print_r($symptom[0]);
@@ -56,7 +57,7 @@ class ConsultationController extends Controller
 
                             $arrayCfHE[$keySymptom][0] = $symptoms[0];
                             $arrayCfHE[$keySymptom][1] = $symptoms[1];
-                            $arrayCfHE[$keySymptom][2][$i] = [$kodeRequest, ($symptom[1] * $cfuser)];
+                            $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfuser)];
                             $i++;
                         }
                     }
@@ -137,5 +138,47 @@ class ConsultationController extends Controller
             'title' => 'Hasil Diagnosa',
             'consultation' => $consultation->load('disease')
         ]);
+    }
+
+    public function findSymptoms(Request $request)
+    {
+        $validated = $request->validate([
+            'data_value' => 'required'
+        ]);
+
+        $explode = explode('-_-', $validated['data_value']);
+        $symptom_id = $explode[0];
+
+        // Cari knowledgebase berdasarkan symptom_id
+        $knowledgebases = Knowledgebase::with('disease', 'symptom')
+            ->where('symptom_id', $symptom_id)
+            ->get();
+
+        if ($knowledgebases->isEmpty()) {
+            return response()->json(['message' => 'Data tidak ditemukan untuk gejala ini.'], 404);
+        }
+
+        $response = [];
+
+        // Loop untuk mengumpulkan semua symptom dari setiap disease
+        foreach ($knowledgebases as $knowledgebase) {
+            $disease = $knowledgebase->disease;
+
+            $symptoms = Knowledgebase::with('symptom')
+                ->where('disease_id', $disease->id)
+                ->get()
+                ->pluck('symptom');
+
+            if ($symptoms) {
+                foreach ($symptoms as $symptom) {
+                    $response[$symptom->id] = [
+                        'id' => $symptom->id,
+                        'gejala' => $symptom->gejala,
+                    ];
+                }
+            }
+        }
+
+        return response()->json(['symptoms' => $response]);
     }
 }

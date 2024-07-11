@@ -19,6 +19,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Penyakit</th>
+                                    <th>Gambar</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -27,6 +28,10 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $disease->nama }}</td>
+                                        <td>
+                                            <img class="img-thumbnail" src="{{ asset('storage/' . $disease->image) }}"
+                                                style="width: 200px;" alt="{{ $disease->nama }}">
+                                        </td>
                                         <td>
                                             <a href="{{ route('diseases.edit', $disease) }}"
                                                 class="btn btn-sm btn-primary" title="Edit">

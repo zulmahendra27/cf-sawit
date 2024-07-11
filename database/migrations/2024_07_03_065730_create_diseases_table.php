@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid');
             $table->string('nama');
+            $table->string('image')->default('images/default.jpg');
             $table->timestamps();
         });
     }
