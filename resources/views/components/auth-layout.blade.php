@@ -45,7 +45,7 @@
                 icon: "{{ session('type') }}",
                 buttons: {
                     confirm: {
-                        className: "btn btn-{{ session('type') }}",
+                        className: "btn btn-{{ session('btn') }}",
                     },
                 },
             });

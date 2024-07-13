@@ -12,6 +12,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public function getRouteKeyName(): string
+    {
+        return 'username';
+    }
+
     public function consultations(): HasMany
     {
         return $this->hasMany(Consultation::class);

@@ -33,7 +33,8 @@ class AuthController extends Controller
         $alert = [
             'alert' => 'Login gagal, periksa kembali username atau password',
             'title' => 'Error!',
-            'type' => 'error'
+            'type' => 'error',
+            'btn' => 'danger'
         ];
 
         return back()->with($alert);
@@ -62,7 +63,8 @@ class AuthController extends Controller
         $alert = [
             'alert' => 'Registrasi berhasil',
             'title' => 'Sukses!',
-            'type' => 'success'
+            'type' => 'success',
+            'btn' => 'success'
         ];
 
         return redirect(route('auth.loginview'))->with($alert);

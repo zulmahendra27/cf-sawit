@@ -1,7 +1,7 @@
 <div class="sidebar-wrapper scrollbar scrollbar-inner">
     <div class="sidebar-content">
         <ul class="nav nav-secondary">
-            <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
+            <li class="nav-item {{ Request::is(['/', 'profile*']) ? 'active' : '' }}">
                 <a href="/">
                     <i class="fas fa-home"></i>
                     <p>Dashboard</p>
@@ -30,6 +30,12 @@
                     <a href="{{ route('knowledgebases.index') }}">
                         <i class="fas fa-book-reader"></i>
                         <p>Basis Pengetahuan</p>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('users*') ? 'active' : '' }}">
+                    <a href="{{ route('users.index') }}">
+                        <i class="fas fa-users"></i>
+                        <p>Manajemen User</p>
                     </a>
                 </li>
             @endcan

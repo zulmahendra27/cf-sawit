@@ -9,22 +9,14 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="display table table-hover">
-                            <thead class="text-center">
-                                <tr>
-                                    <th style="width: 30%;">Gejala</th=>
-                                    <th>Pilihan</th>
-                                </tr>
-                                {{-- <tr>
-                                    <th>Tidak<br>Tahu</th>
-                                    <th>Tidak<br>Yakin</th>
-                                    <th>Mungkin</th>
-                                    <th>Kemungkinan<br>Besar</th>
-                                    <th>Hampir<br>Pasti</th>
-                                    <th>Pasti</th>
-                                </tr> --}}
-                            </thead>
-                            <form id="myForm" method="POST" action="{{ route('consultation.diagnose') }}">
+                        <form id="myForm" method="POST" action="{{ route('consultation.diagnose') }}">
+                            <table class="display table table-hover">
+                                <thead class="text-center">
+                                    <tr>
+                                        <th style="width: 30%;">Gejala</th=>
+                                        <th>Pilihan</th>
+                                    </tr>
+                                </thead>
                                 @csrf
                                 <tbody id="dataInTable">
                                     @foreach ($symptoms as $symptom)
@@ -88,8 +80,8 @@
                                         </td>
                                     </tr>
                                 </tfoot>
-                            </form>
-                        </table>
+                            </table>
+                        </form>
                     </div>
                 </div>
             </div>

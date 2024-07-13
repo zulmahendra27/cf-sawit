@@ -5,7 +5,9 @@ use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\KnowledgebaseController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SymptomController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'index'])->name('auth.loginview')->middleware(['guest']);
@@ -30,6 +32,9 @@ Route::middleware(['admin'])->group(function () {
 
     // route basis pengetahuan
     Route::resource('knowledgebases', KnowledgebaseController::class)->except(['show']);
+
+    // route management users
+    Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
 });
 
 Route::middleware(['user'])->group(function () {
@@ -43,4 +48,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', DashboardController::class);
     Route::get('/consultation/result', [ConsultationController::class, 'result'])->name('consultation.result');
     Route::get('/consultation/result/{consultation}', [ConsultationController::class, 'detail'])->name('consultation.detail');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 });
