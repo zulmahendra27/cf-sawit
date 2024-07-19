@@ -24,8 +24,8 @@
                                     @forelse ($consultations as $consultation)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $consultation->disease->nama }}</td>
-                                            <td>{{ $consultation->percentage . ' %' }}</td>
+                                            <td>{{ $consultation->highestConsultation->disease->nama }}</td>
+                                            <td>{{ $consultation->highestConsultation->percentage . ' %' }}</td>
                                             <td>{{ $consultation->created_at->format('d-m-Y') }}<br>{{ $consultation->created_at->format('H:i') . ' WIB' }}
                                             </td>
                                             <td>
@@ -63,11 +63,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($user->consultations as $consultation)
+                                            @forelse ($user->logs as $consultation)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $consultation->disease->nama }}</td>
-                                                    <td>{{ $consultation->percentage . ' %' }}</td>
+                                                    <td>{{ $consultation->highestConsultation->disease->nama }}
+                                                    </td>
+                                                    <td>{{ $consultation->highestConsultation->percentage . ' %' }}
+                                                    </td>
                                                     <td>{{ $consultation->created_at->format('d-m-Y') }}<br>{{ $consultation->created_at->format('H:i') . ' WIB' }}
                                                     </td>
                                                     <td>
@@ -75,6 +77,16 @@
                                                             class="btn btn-sm btn-info" title="Detail">
                                                             <i class="fas fa-align-center me-2"></i> Detail
                                                         </a>
+                                                        <form
+                                                            action="{{ route('consultation.delete', $consultation) }}"
+                                                            method="post" class="delete-form d-inline">
+                                                            @method('delete')
+                                                            @csrf
+                                                            <button
+                                                                class="btn btn-sm btn-warning text-white delete-button p-2">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -88,7 +100,7 @@
                                 </div>
                             </div>
                         @empty
-                            <h2>Belum ada user yang melakukan diagnosa</h2>
+                            <h2>-- Belum ada user yang melakukan diagnosa --</h2>
                         @endforelse
                     @endif
                 </div>

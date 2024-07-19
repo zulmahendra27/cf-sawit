@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('consultations', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->foreignId('user_id')
+            $table->foreignId('log_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

@@ -37,6 +37,17 @@
     <link rel="stylesheet" href="{{ asset('css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/kaiadmin.min.css') }}" />
 
+
+    @if (Request::is('diseases/*'))
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+        <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+
+        <style>
+            trix-toolbar [data-trix-button-group="file-tools"] {
+                display: none;
+            }
+        </style>
+    @endif
 </head>
 
 <body>

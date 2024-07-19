@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CfUser;
 use App\Models\User;
 use App\Models\Disease;
 use App\Models\Symptom;
@@ -9,6 +10,8 @@ use Illuminate\Support\Str;
 use App\Models\Consultation;
 use Illuminate\Http\Request;
 use App\Models\Knowledgebase;
+use App\Models\Log;
+use Carbon\Carbon;
 
 class ConsultationController extends Controller
 {
@@ -40,6 +43,8 @@ class ConsultationController extends Controller
         }
 
         $arrayCfHE = [];
+        $arrayCfUser = [];
+        // dd($arraySymptoms);
 
         if ($arraySymptoms) {
             foreach ($arraySymptoms as $keySymptom => $symptoms) {
@@ -48,16 +53,22 @@ class ConsultationController extends Controller
                     foreach ($validated['gejala'] as $data) {
                         $explode = explode('-_-', $data);
                         $idRequest = $explode[0];
-                        $cfuser = $explode[1];
+                        $cfUserInput = $explode[1];
                         if ($symptom[0] == $idRequest) {
                             // $datas[$keySymptom][$i] =
                             //     $i++;
                             // print_r($symptom[0]);
                             // print_r($symptom[1]);
 
+                            $arrayCfUser[$keySymptom]['disease_id'] = $symptoms[0];
+                            $arrayCfUser[$keySymptom]['data_user'][$i] = [
+                                'symptom_id' => $symptom[0],
+                                'cfuser' => $cfUserInput
+                            ];
+
                             $arrayCfHE[$keySymptom][0] = $symptoms[0];
                             $arrayCfHE[$keySymptom][1] = $symptoms[1];
-                            $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfuser)];
+                            $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfUserInput)];
                             $i++;
                         }
                     }
@@ -65,6 +76,8 @@ class ConsultationController extends Controller
                 // print_r($symptom);
             }
         }
+
+        // dd($arrayCfHE);
 
         if ($arrayCfHE) {
             $arrayPercentage = [];
@@ -80,6 +93,8 @@ class ConsultationController extends Controller
                     }
                 }
 
+
+
                 $arrayPercentage[$keyCfHE]['id'] = $cfHE[0];
                 $arrayPercentage[$keyCfHE]['disease'] = $cfHE[1];
                 $arrayPercentage[$keyCfHE]['percentage'] = round($cfCombine * 100, 2);
@@ -94,15 +109,32 @@ class ConsultationController extends Controller
             return $b['percentage'] <=> $a['percentage'];
         });
 
+        // dd($arrayCfUser);
+
+        $uuidLog = Str::uuid();
+
+        $log = Log::create([
+            'uuid' => $uuidLog,
+            'user_id' => auth()->user()->id
+        ]);
+
+        $arrayConsultations = [];
+
         foreach ($arrayPercentage as $percentage) {
             $uuid = Str::uuid();
 
-            Consultation::create([
+            $consultation = Consultation::create([
                 'uuid' => $uuid,
-                'user_id' => auth()->user()->id,
+                'log_id' => $log->id,
                 'disease_id' => $percentage['id'],
                 'percentage' => $percentage['percentage']
             ]);
+
+            $arrayConsultations[] = [
+                'uuid' => $uuid,
+                'disease_id' => $percentage['id'],
+                'consultation_id' => $consultation->id
+            ];
 
             // $alert = [
             //     'alert' => 'Diagnosa berhasil',
@@ -110,21 +142,49 @@ class ConsultationController extends Controller
             //     'type' => 'success'
             // ];
 
-            return redirect(route('consultation.detail', $uuid));
+            // return redirect(route('consultation.detail', $uuid));
         }
+
+        $cfUsers = [];
+
+        foreach ($arrayConsultations as $consultation) {
+            foreach ($arrayCfUser as $cfUser) {
+                if ($consultation['disease_id'] == $cfUser['disease_id']) {
+                    foreach ($cfUser['data_user'] as $cfUserForDb) {
+                        $uuidCfUser = Str::uuid();
+                        $now = Carbon::now();
+
+                        $cfUsers[] = [
+                            'uuid' => $uuidCfUser,
+                            'symptom_id' => $cfUserForDb['symptom_id'],
+                            'consultation_id' => $consultation['consultation_id'],
+                            'cfuser' => $cfUserForDb['cfuser'],
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ];
+                    }
+                }
+            }
+        }
+
+        CfUser::insert($cfUsers);
+
+        return redirect(route('consultation.detail', $uuidLog));
 
         // dd($arrayPercentage);
     }
 
     public function result()
     {
-        $consultations = Consultation::with('disease')->where(['user_id' => auth()->user()->id])->latest()->take(10)->get();
+        $consultations = Log::with('highestConsultation.disease')->where(['user_id' => auth()->user()->id])->latest()->take(10)->get();
 
         if (auth()->user()->level === 'admin') {
-            $consultations = User::with(['consultations' => function ($query) {
+            $consultations = User::with(['logs.highestConsultation.disease' => function ($query) {
                 $query->latest()->limit(10);
             }])->where(['level' => 'user'])->get();
         }
+
+        // dd($consultations->logs);
 
         return view('consultation.result', [
             'title' => 'Riwayat Diagnosa',
@@ -132,12 +192,27 @@ class ConsultationController extends Controller
         ]);
     }
 
-    public function detail(Consultation $consultation)
+    public function detail(Log $log)
     {
+        // dd($log->load('consultations.disease'));
+
         return view('consultation.detail', [
             'title' => 'Hasil Diagnosa',
-            'consultation' => $consultation->load('disease')
+            'consultations' => $log->load('consultations.disease')
         ]);
+    }
+
+    public function delete(Log $log)
+    {
+        $log->delete();
+
+        $alert = [
+            'alert' => 'Data berhasil dihapus',
+            'title' => 'Sukses!',
+            'type' => 'success'
+        ];
+
+        return redirect(route('consultation.result'))->with($alert);
     }
 
     public function findSymptoms(Request $request)

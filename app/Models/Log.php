@@ -7,30 +7,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Consultation extends Model
+class Log extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
-    // protected $with = ['disease'];
 
     public function getRouteKeyName(): string
     {
         return 'uuid';
     }
 
-    public function log(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Log::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function disease(): BelongsTo
+    public function consultations(): HasMany
     {
-        return $this->belongsTo(Disease::class);
+        return $this->hasMany(Consultation::class);
     }
 
-    public function cfusers(): HasMany
+    // Relasi khusus untuk mendapatkan konsultasi dengan persentase tertinggi
+    public function highestConsultation()
     {
-        return $this->hasMany(CfUser::class);
+        return $this->hasOne(Consultation::class)->orderBy('percentage', 'desc');
     }
 }

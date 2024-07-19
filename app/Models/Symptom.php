@@ -21,4 +21,9 @@ class Symptom extends Model
     {
         return $this->hasMany(Knowledgebase::class);
     }
+
+    public function cfusers(): HasMany
+    {
+        return $this->hasMany(CfUser::class);
+    }
 }

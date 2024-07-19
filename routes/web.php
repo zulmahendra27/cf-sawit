@@ -35,6 +35,9 @@ Route::middleware(['admin'])->group(function () {
 
     // route management users
     Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+
+    // route delete consultation
+    Route::delete('/consultation/{consultation}', [ConsultationController::class, 'delete'])->name('consultation.delete');
 });
 
 Route::middleware(['user'])->group(function () {
@@ -47,7 +50,7 @@ Route::middleware(['user'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/', DashboardController::class);
     Route::get('/consultation/result', [ConsultationController::class, 'result'])->name('consultation.result');
-    Route::get('/consultation/result/{consultation}', [ConsultationController::class, 'detail'])->name('consultation.detail');
+    Route::get('/consultation/result/{log}', [ConsultationController::class, 'detail'])->name('consultation.detail');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
 });

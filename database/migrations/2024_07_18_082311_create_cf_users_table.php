@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('diseases', function (Blueprint $table) {
+        Schema::create('cf_users', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->string('nama');
-            $table->text('solusi')->nullable();
-            $table->string('image')->default('images/default.jpg');
+            $table->foreignId('symptom_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('consultation_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->double('cfuser');
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('diseases');
+        Schema::dropIfExists('cf_users');
     }
 };

@@ -33,6 +33,19 @@
                         </div>
 
                         <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="solusi">Solusi</label>
+                            <div class="col-md-6">
+                                <input id="solusi" type="hidden" name="solusi"
+                                    value="{{ old('solusi', isset($disease) ? $disease->solusi : '') }}">
+                                <trix-editor input="solusi"
+                                    class="form-control @error('solusi') is-invalid @enderror"></trix-editor>
+                                @error('solusi')
+                                    <div class="form-text text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
                             <label class="col-md-2 col-form-label" for="image">Gambar Penyakit</label>
                             <div class="col-md-6">
                                 <input type="file" class="form-control @error('image') is-invalid @enderror"
@@ -79,6 +92,10 @@
             };
             reader.readAsDataURL(event.target.files[0]);
         });
+
+        document.addEventListener('trix-file-accept', function(e) {
+            e.preventDefault();
+        })
     </script>
 
 </x-layout>

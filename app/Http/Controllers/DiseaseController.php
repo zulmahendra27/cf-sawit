@@ -37,6 +37,7 @@ class DiseaseController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|max:255',
+            'solusi' => 'nullable',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -90,6 +91,7 @@ class DiseaseController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|max:255',
+            'solusi' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -99,7 +101,7 @@ class DiseaseController extends Controller
         // Jika ada file foto baru, simpan dengan nama baru
         if ($request->hasFile('image')) {
             // Hapus file lama
-            if ($path && Storage::disk('public')->exists($path)) {
+            if ($path && $path !== 'images/default.jpg' && Storage::disk('public')->exists($path)) {
                 Storage::disk('public')->delete($path);
             }
 
@@ -129,9 +131,11 @@ class DiseaseController extends Controller
      */
     public function destroy(Disease $disease)
     {
+        $path = $disease->image;
+
         // Menghapus file foto dari storage
-        if ($disease->image && Storage::disk('public')->exists($disease->image)) {
-            Storage::disk('public')->delete($disease->image);
+        if ($path && $path !== 'images/default.jpg' && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
         }
 
         $disease->delete();

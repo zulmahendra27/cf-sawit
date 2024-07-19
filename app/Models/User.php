@@ -17,9 +17,9 @@ class User extends Authenticatable
         return 'username';
     }
 
-    public function consultations(): HasMany
+    public function logs(): HasMany
     {
-        return $this->hasMany(Consultation::class);
+        return $this->hasMany(Log::class);
     }
 
     /**
