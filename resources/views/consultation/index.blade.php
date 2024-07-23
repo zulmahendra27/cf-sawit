@@ -1,6 +1,19 @@
 <x-layout>
     <x-slot:title>{{ $title }}</x-slot:title>
 
+    <style>
+        select.no-arrow {
+            text-align-last: center;
+            -moz-text-align-last: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: none;
+            padding-right: 1rem;
+        }
+    </style>
+
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -13,7 +26,7 @@
                             <table class="display table table-hover">
                                 <thead class="text-center">
                                     <tr>
-                                        <th style="width: 30%;">Gejala</th=>
+                                        <th style="width: 80%;">Gejala</th=>
                                         <th>Pilihan</th>
                                     </tr>
                                 </thead>
@@ -23,7 +36,19 @@
                                         <tr>
                                             <td>{{ $symptom->gejala }}</td>
                                             <td>
-                                                <div class="selectgroup w-100">
+                                                <div class="form-group">
+                                                    <select class="form-select no-arrow" name="gejala[]">
+                                                        <option value="-">Pilih Jika Sesuai</option>
+                                                        <option value="{{ $symptom->id }}-_-0">Tidak Tahu</option>
+                                                        <option value="{{ $symptom->id }}-_-0.2">Tidak Yakin</option>
+                                                        <option value="{{ $symptom->id }}-_-0.4">Mungkin</option>
+                                                        <option value="{{ $symptom->id }}-_-0.6">Kemungkinan Besar
+                                                        </option>
+                                                        <option value="{{ $symptom->id }}-_-0.8">Hampir Pasti</option>
+                                                        <option value="{{ $symptom->id }}-_-1">Pasti</option>
+                                                    </select>
+                                                </div>
+                                                {{-- <div class="selectgroup w-100">
                                                     <label class="selectgroup-item col-2">
                                                         <input type="radio" name="gejala[{{ $loop->index }}]"
                                                             value="{{ $symptom->id }}-_-0" class="selectgroup-input" />
@@ -62,7 +87,7 @@
                                                             class="selectgroup-input" />
                                                         <span class="selectgroup-button text-dark">Pasti</span>
                                                     </label>
-                                                </div>
+                                                </div> --}}
                                             </td>
                                         </tr>
                                     @endforeach

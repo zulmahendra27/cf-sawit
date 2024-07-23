@@ -60,11 +60,11 @@ $(document).ready(function () {
             data: {
                 // Data yang ingin dikirim
                 data_value: data_value,
-                message: "Radio button changed",
+                message: "Select option changed",
             },
             success: function (response) {
                 console.log("AJAX request successful");
-                console.log(response);
+                // console.log(response);
 
                 // Kode untuk menambahkan gejala ke dalam tabel di sini
                 let obj = response.symptoms;
@@ -79,45 +79,16 @@ $(document).ready(function () {
                         <tr>
                             <td>${symptom.gejala}</td>
                             <td>
-                                <div class="selectgroup w-100">
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-0" class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Tidak Tahu</span>
-                                    </label>
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-0.2"
-                                            class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Tidak
-                                            Yakin</span>
-                                    </label>
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-0.4"
-                                            class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Mungkin</span>
-                                    </label>
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-0.6"
-                                            class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Kemungkinan
-                                            Besar</span>
-                                    </label>
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-0.8"
-                                            class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Hampir
-                                            Pasti</span>
-                                    </label>
-                                    <label class="selectgroup-item col-2">
-                                        <input type="radio" name="gejala[${index}]"
-                                            value="${symptom.id}-_-1"
-                                            class="selectgroup-input" />
-                                        <span class="selectgroup-button text-dark">Pasti</span>
-                                    </label>
+                                <div class="form-group">
+                                    <select class="form-select no-arrow" name="gejala[${index}]">
+                                        <option value="-">Pilih Jika Sesuai</option>
+                                        <option value="${symptom.id}-_-0">Tidak Tahu</option>
+                                        <option value="${symptom.id}-_-0.2">Tidak Yakin</option>
+                                        <option value="${symptom.id}-_-0.4">Mungkin</option>
+                                        <option value="${symptom.id}-_-0.6">Kemungkinan Besar</option>
+                                        <option value="${symptom.id}-_-0.8">Hampir Pasti</option>
+                                        <option value="${symptom.id}-_-1">Pasti</option>
+                                    </select>
                                 </div>
                             </td>
                         </tr>
@@ -128,7 +99,7 @@ $(document).ready(function () {
 
                 // Jika ada nilai yang sudah dipilih pertama kali, periksa kembali radio button yang sesuai
                 if (firstChecked !== null) {
-                    $('input[type="radio"][value="' + firstChecked + '"]').prop('checked', true);
+                    $('select option[value="' + firstChecked + '"]').prop('selected', true);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -139,15 +110,15 @@ $(document).ready(function () {
     }
 
     // Event listener for radio button changes
-    $('input[type="radio"]').change(function () {
-        if (this.checked) {
+    $('select[name^="gejala"]').change(function () {
+        if (this.value !== "-") {
             if (!alreadyChecked) {
                 alreadyChecked = true;
                 firstChecked = this.value;
                 triggerAjax(this.value);
             }
         } else {
-            if (this === firstChecked) {
+            if (this.value === firstChecked) {
                 alreadyChecked = false;
                 firstChecked = null;
                 triggerAjax(this.value);

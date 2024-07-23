@@ -51,25 +51,27 @@ class ConsultationController extends Controller
                 $i = 0;
                 foreach ($symptoms[2] as $symptom) {
                     foreach ($validated['gejala'] as $data) {
-                        $explode = explode('-_-', $data);
-                        $idRequest = $explode[0];
-                        $cfUserInput = $explode[1];
-                        if ($symptom[0] == $idRequest) {
-                            // $datas[$keySymptom][$i] =
-                            //     $i++;
-                            // print_r($symptom[0]);
-                            // print_r($symptom[1]);
+                        if ($data != '-') {
+                            $explode = explode('-_-', $data);
+                            $idRequest = $explode[0];
+                            $cfUserInput = $explode[1];
+                            if ($symptom[0] == $idRequest) {
+                                // $datas[$keySymptom][$i] =
+                                //     $i++;
+                                // print_r($symptom[0]);
+                                // print_r($symptom[1]);
 
-                            $arrayCfUser[$keySymptom]['disease_id'] = $symptoms[0];
-                            $arrayCfUser[$keySymptom]['data_user'][$i] = [
-                                'symptom_id' => $symptom[0],
-                                'cfuser' => $cfUserInput
-                            ];
+                                $arrayCfUser[$keySymptom]['disease_id'] = $symptoms[0];
+                                $arrayCfUser[$keySymptom]['data_user'][$i] = [
+                                    'symptom_id' => $symptom[0],
+                                    'cfuser' => $cfUserInput
+                                ];
 
-                            $arrayCfHE[$keySymptom][0] = $symptoms[0];
-                            $arrayCfHE[$keySymptom][1] = $symptoms[1];
-                            $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfUserInput)];
-                            $i++;
+                                $arrayCfHE[$keySymptom][0] = $symptoms[0];
+                                $arrayCfHE[$keySymptom][1] = $symptoms[1];
+                                $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfUserInput)];
+                                $i++;
+                            }
                         }
                     }
                 }
