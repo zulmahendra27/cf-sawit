@@ -37,7 +37,7 @@ Route::middleware(['admin'])->group(function () {
     Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
 
     // route delete consultation
-    Route::delete('/consultation/{consultation}', [ConsultationController::class, 'delete'])->name('consultation.delete');
+    Route::delete('/consultation/{log}', [ConsultationController::class, 'delete'])->name('consultation.delete');
 });
 
 Route::middleware(['user'])->group(function () {
