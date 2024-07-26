@@ -29,6 +29,20 @@ class ConsultationController extends Controller
             'gejala' => 'required|array'
         ]);
 
+        if (collect($validated['gejala'])->every(function ($value) {
+            return $value === '-';
+        })) {
+            $alert = [
+                'alert' => 'Pilihan tidak boleh kosong',
+                'title' => 'Warning!',
+                'type' => 'warning'
+            ];
+
+            return redirect(route('consultation.index'))->with($alert);
+        }
+
+        // dd($validated);
+
         $diseases = Disease::with('knowledgebases')->get();
         $arraySymptoms = [];
 
@@ -49,33 +63,29 @@ class ConsultationController extends Controller
         if ($arraySymptoms) {
             foreach ($arraySymptoms as $keySymptom => $symptoms) {
                 $i = 0;
-                foreach ($symptoms[2] as $symptom) {
-                    foreach ($validated['gejala'] as $data) {
-                        if ($data != '-') {
-                            $explode = explode('-_-', $data);
-                            $idRequest = $explode[0];
-                            $cfUserInput = $explode[1];
-                            if ($symptom[0] == $idRequest) {
-                                // $datas[$keySymptom][$i] =
-                                //     $i++;
-                                // print_r($symptom[0]);
-                                // print_r($symptom[1]);
+                if (isset($symptoms[2])) {
+                    foreach ($symptoms[2] as $symptom) {
+                        foreach ($validated['gejala'] as $data) {
+                            if ($data != '-') {
+                                $explode = explode('-_-', $data);
+                                $idRequest = $explode[0];
+                                $cfUserInput = $explode[1];
+                                if ($symptom[0] == $idRequest) {
+                                    $arrayCfUser[$keySymptom]['disease_id'] = $symptoms[0];
+                                    $arrayCfUser[$keySymptom]['data_user'][$i] = [
+                                        'symptom_id' => $symptom[0],
+                                        'cfuser' => $cfUserInput
+                                    ];
 
-                                $arrayCfUser[$keySymptom]['disease_id'] = $symptoms[0];
-                                $arrayCfUser[$keySymptom]['data_user'][$i] = [
-                                    'symptom_id' => $symptom[0],
-                                    'cfuser' => $cfUserInput
-                                ];
-
-                                $arrayCfHE[$keySymptom][0] = $symptoms[0];
-                                $arrayCfHE[$keySymptom][1] = $symptoms[1];
-                                $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfUserInput)];
-                                $i++;
+                                    $arrayCfHE[$keySymptom][0] = $symptoms[0];
+                                    $arrayCfHE[$keySymptom][1] = $symptoms[1];
+                                    $arrayCfHE[$keySymptom][2][$i] = [$idRequest, ($symptom[1] * $cfUserInput)];
+                                    $i++;
+                                }
                             }
                         }
                     }
                 }
-                // print_r($symptom);
             }
         }
 
