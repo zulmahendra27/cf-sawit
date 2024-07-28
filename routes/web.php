@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiseaseController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SymptomController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -34,7 +35,7 @@ Route::middleware(['admin'])->group(function () {
     Route::resource('knowledgebases', KnowledgebaseController::class)->except(['show']);
 
     // route management users
-    Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+    Route::resource('users', UserController::class)->except(['show']);
 
     // route delete consultation
     Route::delete('/consultation/{log}', [ConsultationController::class, 'delete'])->name('consultation.delete');
@@ -53,4 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/consultation/result/{log}', [ConsultationController::class, 'detail'])->name('consultation.detail');
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile/{user}', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::middleware(['pimpinan'])->group(function () {
+    Route::get('/report/consultation/{user}', [ReportController::class, 'consultation'])->name('report.consultation');
 });

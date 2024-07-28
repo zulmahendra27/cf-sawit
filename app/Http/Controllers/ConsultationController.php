@@ -106,10 +106,10 @@ class ConsultationController extends Controller
                 }
 
 
-
                 $arrayPercentage[$keyCfHE]['id'] = $cfHE[0];
                 $arrayPercentage[$keyCfHE]['disease'] = $cfHE[1];
                 $arrayPercentage[$keyCfHE]['percentage'] = round($cfCombine * 100, 2);
+                $arrayPercentage[$keyCfHE]['count_symptoms'] = count($cfHE[2]);
 
                 // print_r($cfCombine * 100);
                 // print_r($arrayCfCombine);
@@ -117,11 +117,20 @@ class ConsultationController extends Controller
             }
         }
 
+        // dd($arrayPercentage);
+
+        // usort($arrayPercentage, function ($a, $b) {
+        //     return $b['percentage'] <=> $a['percentage'];
+        // });
+
         usort($arrayPercentage, function ($a, $b) {
+            if ($b['percentage'] == $a['percentage']) {
+                return $b['count_symptoms'] <=> $a['count_symptoms'];
+            }
             return $b['percentage'] <=> $a['percentage'];
         });
 
-        // dd($arrayCfUser);
+        // dd($arrayPercentage);
 
         $uuidLog = Str::uuid();
 
@@ -190,12 +199,13 @@ class ConsultationController extends Controller
     {
         $consultations = Log::with('highestConsultation.disease')->where(['user_id' => auth()->user()->id])->latest()->take(10)->get();
 
-        if (auth()->user()->level === 'admin') {
-            $consultations = User::with(['logs.highestConsultation.disease' => function ($query) {
+        if (auth()->user()->level != 'user') {
+            $consultations = User::with(['logs' => function ($query) {
                 $query->latest()->limit(10);
-            }])->where(['level' => 'user'])->get();
+            }, 'logs.highestConsultation.disease'])->where(['level' => 'user'])->get();
         }
 
+        // dd($consultations);
         // dd($consultations->logs);
 
         return view('consultation.result', [
@@ -206,11 +216,11 @@ class ConsultationController extends Controller
 
     public function detail(Log $log)
     {
-        // dd($log->load('consultations.disease'));
+        // dd($log->load(['consultations.disease', 'consultations.cfusers.symptom']));
 
         return view('consultation.detail', [
             'title' => 'Hasil Diagnosa',
-            'consultations' => $log->load('consultations.disease')
+            'consultations' => $log->load(['consultations.disease', 'consultations.cfusers.symptom'])
         ]);
     }
 

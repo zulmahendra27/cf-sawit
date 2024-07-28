@@ -6,6 +6,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">{{ $title }}</h4>
+                    <a href="{{ route('users.create') }}">
+                        <span class="badge badge-primary p-2">
+                            <i class="fas fa-plus me-2"></i>Tambah Data
+                        </span>
+                    </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -15,6 +20,7 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     <th>Username</th>
+                                    <th>Level</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -24,6 +30,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->username }}</td>
+                                        <td>{{ ucwords($user->level) }}</td>
                                         <td>
                                             <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-primary"
                                                 title="Edit">

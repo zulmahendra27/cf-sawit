@@ -38,38 +38,77 @@
                     </h6>
                 </div>
             </div>
-            <div class="card">
+            <div class="card mb-2">
+                <h4 class="card-header">Gejala yang Dialami</h4>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display table">
+                            <thead>
+                                <th>Kode</th>
+                                <th>Gejala</th>
+                                <th>Nilai CF User</th>
+                            </thead>
+                            <tbody>
+                                @foreach ($consultations->consultations->first()->cfusers as $userSymptom)
+                                    <tr>
+                                        <td>{{ $userSymptom->symptom->kode }}</td>
+                                        <td>{{ $userSymptom->symptom->gejala }}</td>
+                                        <td>{{ $userSymptom->cfuser }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{-- <div class="card">
                 <h4 class="card-header">Diagnosa Lain</h4>
                 <div class="card-body">
-                    @if ($consultations->consultations->count() > 1)
-                        <div class="table-responsive mb-3">
-                            <table class="display table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Penyakit</th>
-                                        <th>Persentasi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    <div class="table-responsive mb-3">
+                        <table class="display table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Penyakit</th>
+                                    <th>Persentase</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if ($consultations->consultations->count() > 1)
+                                    @php
+                                        $exist = false;
+                                    @endphp
                                     @foreach ($consultations->consultations->skip(1) as $other)
-                                        <tr>
-                                            <td>{{ $other->disease->nama }}</td>
-                                            <td>{{ $other->percentage . ' %' }}</td>
-                                        </tr>
+                                        @if ($other->percentage != 100)
+                                            @php
+                                                $exist = true;
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $other->disease->nama }}</td>
+                                                <td>{{ $other->percentage . ' %' }}</td>
+                                            </tr>
+                                        @endif
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <h5>-- Tidak ada diagnosa lain --</h5>
-                    @endif
+
+                                    @if (!$exist)
+                                        <tr>
+                                            <th colspan="2" class="text-center">-- Tidak ada diagnosa lain --</th>
+                                        </tr>
+                                    @endif
+                                @else
+                                    <tr>
+                                        <th colspan="2" class="text-center">-- Tidak ada diagnosa lain --</th>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="text-center">
                         <a href="{{ route('consultation.index') }}" class="btn btn-info">
                             <i class="fas fa-check-double me-2"></i>Ulangi Diagnosa
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
     </div>

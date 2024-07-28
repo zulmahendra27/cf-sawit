@@ -13,7 +13,8 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="{{ route('users.update', $user) }}">
+                    <form method="post"
+                        action="{{ isset($user) ? route('users.update', $user) : route('users.store') }}">
                         @if (isset($user))
                             @method('put')
                         @endif
@@ -31,8 +32,38 @@
                             </div>
                         </div>
 
+                        @if (request()->routeIs('users.create'))
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label" for="username">Username</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control @error('username') is-invalid @enderror"
+                                        name="username" id="username"
+                                        value="{{ old('username', isset($user) ? $user->username : '') }}"
+                                        placeholder="Username" required />
+                                    @error('username')
+                                        <div class="form-text text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label" for="level">Penyakit</label>
+                                <div class="col-md-6">
+                                    <select id="level" name="level"
+                                        class="form-select form-control @error('level') is-invalid @enderror">
+                                        <option value="pimpinan">Pimpinan</option>
+                                        <option value="user">User</option>
+                                    </select>
+                                    @error('level')
+                                        <div class="form-text text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="row mb-3">
-                            <label class="col-md-2 col-form-label" for="password">Reset Password</label>
+                            <label class="col-md-2 col-form-label"
+                                for="password">{{ isset($user) ? 'Reset Password' : 'Password' }}</label>
                             <div class="col-md-6">
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
                                     name="password" id="password"
@@ -42,6 +73,22 @@
                                 @enderror
                             </div>
                         </div>
+
+                        @if (request()->routeIs('users.create'))
+                            <div class="row mb-3">
+                                <label class="col-md-2 col-form-label" for="password_confirmation">Konfirmasi
+                                    Password</label>
+                                <div class="col-md-6">
+                                    <input type="password"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        name="password_confirmation" id="password_confirmation"
+                                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                                    @error('password_confirmation')
+                                        <div class="form-text text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endif
 
                         <div class="row justify-content-end">
                             <div class="col-md-10">

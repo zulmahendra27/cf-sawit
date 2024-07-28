@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
         return view('user.index', [
-            'users' => User::where('level', 'user')->get(),
+            'users' => User::where('level', '!=', 'admin')->orderBy('level', 'asc')->get(),
             'title' => 'Manajemen User'
         ]);
     }
@@ -24,7 +24,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.form', [
+            'title' => 'Tambah Data User'
+        ]);
     }
 
     /**
@@ -32,7 +34,26 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required'],
+            'username' => ['required', 'unique:users,username', 'min:5'],
+            'password' => ['required', 'confirmed', 'min:5'],
+            'level' => ['required']
+        ]);
+
+        // dd($validated);
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        User::create($validated);
+
+        $alert = [
+            'alert' => 'Data berhasil ditambahkan',
+            'title' => 'Sukses!',
+            'type' => 'success'
+        ];
+
+        return redirect(route('users.index'))->with($alert);
     }
 
     /**

@@ -45,11 +45,24 @@
                         </div>
                     @else
                         @forelse ($consultations as $keyUser => $user)
-                            <button class="alert alert-primary fw-bold h4 col-12 text-start" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#collapse-{{ $keyUser }}"
-                                aria-expanded="false" aria-controls="collapse-{{ $keyUser }}">
-                                {{ $user->name }}
-                            </button>
+                            <div class="row d-flex justify-content-between mb-3">
+                                <div class="{{ auth()->user()->level == 'admin' ? 'col-md-12' : 'col-md-10' }}">
+                                    <button class="alert col-12 alert-primary mb-2 fw-bold h4 text-start" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapse-{{ $keyUser }}"
+                                        aria-expanded="false" aria-controls="collapse-{{ $keyUser }}">
+                                        <div>{{ $user->name }}</div>
+                                    </button>
+                                </div>
+                                @can('pimpinan')
+                                    <div class="col-md-2 ps-md-0 mb-2 d-flex align-items-center">
+                                        <a href="{{ route('report.consultation', $user) }}" target="_blank"
+                                            class="btn btn-sm btn-success text-white col-12 fs-6 d-flex justify-content-center align-items-center {{ $user->logs->count() == 0 ? 'disabled' : '' }}"
+                                            style="height: 100%">
+                                            <i class="fas fa-print me-2"></i>Cetak Laporan
+                                        </a>
+                                    </div>
+                                @endcan
+                            </div>
                             <div class="collapse" id="collapse-{{ $keyUser }}">
                                 <div class="table-responsive">
                                     <table class="display table table-striped table-hover">

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsPimpinan;
 use App\Http\Middleware\IsUser;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/login');
         $middleware->alias([
             'admin' => IsAdmin::class,
-            'user' => IsUser::class
+            'user' => IsUser::class,
+            'pimpinan' => IsPimpinan::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

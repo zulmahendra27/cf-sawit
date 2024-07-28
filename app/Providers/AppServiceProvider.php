@@ -28,5 +28,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('user', function (User $user) {
             return $user->level === 'user';
         });
+
+        Gate::define('pimpinan', function (User $user) {
+            return $user->level === 'pimpinan';
+        });
     }
 }
