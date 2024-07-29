@@ -24,20 +24,48 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $user = User::where('username', $credentials['username'])->first();
 
-            return redirect()->intended('/');
+        if (!$user) {
+            $alert = [
+                'alert' => 'Username tidak ditemukan',
+                'title' => 'Error!',
+                'type' => 'error',
+                'btn' => 'danger'
+            ];
+
+            return back()->with($alert);
         }
 
-        $alert = [
-            'alert' => 'Login gagal, periksa kembali username atau password',
-            'title' => 'Error!',
-            'type' => 'error',
-            'btn' => 'danger'
-        ];
+        if (!Auth::attempt($credentials)) {
+            $alert = [
+                'alert' => 'Password salah',
+                'title' => 'Error!',
+                'type' => 'error',
+                'btn' => 'danger'
+            ];
 
-        return back()->with($alert);
+            return back()->with($alert)->withInput();
+        }
+
+        $request->session()->regenerate();
+
+        return redirect()->intended('/');
+
+        // if (Auth::attempt($credentials)) {
+        //     $request->session()->regenerate();
+
+        //     return redirect()->intended('/');
+        // }
+
+        // $alert = [
+        //     'alert' => 'Login gagal, periksa kembali username atau password',
+        //     'title' => 'Error!',
+        //     'type' => 'error',
+        //     'btn' => 'danger'
+        // ];
+
+        // return back()->with($alert);
     }
 
     public function register()

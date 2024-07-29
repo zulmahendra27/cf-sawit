@@ -12,7 +12,8 @@
                                 @csrf
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                        name="username" id="username" placeholder="Username" autofocus required>
+                                        name="username" id="username" placeholder="Username"
+                                        value="{{ old('username') }}" autofocus required>
                                     <label for="username">Username</label>
                                     @error('username')
                                         <div class="form-text text-danger">{{ $message }}</div>

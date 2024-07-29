@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-6 col-md-4">
+                        <div class="col-sm-12 col-md-6">
                             <div class="card card-stats card-primary card-round">
                                 <div class="card-body">
                                     <div class="row">
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-4">
+                        <div class="col-sm-12 col-md-6">
                             <div class="card card-stats card-warning card-round">
                                 <div class="card-body">
                                     <div class="row">
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-4">
+                        {{-- <div class="col-sm-6 col-md-4">
                             <div class="card card-stats card-success card-round">
                                 <div class="card-body">
                                     <div class="row">
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                 </div>
